@@ -60,7 +60,7 @@ CREATE TABLE Cars(
 	[SpeedBoxId] int not null,
 	[Year] int not null,
 	[ControllerVolume] int not null,
-	[COntrollerPower] int not null,
+	[ControllerPower] int not null,
 	[StoreId] int not null,
 	[IsColored] int not null,
 	[NumberOfPlaces] int not null,
@@ -70,9 +70,55 @@ CREATE TABLE Cars(
 	[AdditionalInfo] varchar(200) null,
 )
 
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Markas FOREIGN KEY (MarkaId) REFERENCES Markas(Id);
 
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Models FOREIGN KEY (ModelId) REFERENCES Models(Id);
 
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_BanTypes FOREIGN KEY (BanTypeId) REFERENCES BanTypes(Id);
 
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Colors FOREIGN KEY (ColorId) REFERENCES Colors(Id);
+
+EXEC sp_rename 'Cars.FualTypeId', 'FuelTypeId', 'COLUMN';
+
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_FuelTypes FOREIGN KEY (FuelTypeId) REFERENCES FuelTypes(Id);
+
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Transmissions FOREIGN KEY (TransmissionId) REFERENCES Transmissions(Id);
+
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_SpeedBoxes FOREIGN KEY (SpeedBoxId) REFERENCES SpeedBoxes(Id);
+
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Stores FOREIGN KEY (StoreId) REFERENCES Stores(Id);
+
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Situations FOREIGN KEY (SituationId) REFERENCES Situations(Id);
+
+ALTER TABLE Cars
+ADD CONSTRAINT CHK_Cars_Year CHECK (Year >= 1900 AND Year <= YEAR(GETDATE()));
+
+ALTER TABLE Cars
+ADD CONSTRAINT CHK_Cars_ControllerVolume CHECK (ControllerVolume >= 0 AND ControllerVolume <= 10000);
+
+ALTER TABLE Cars
+ADD CONSTRAINT CHK_Cars_ControllerPower CHECK (ControllerPower >= 0 AND ControllerPower <= 10000);
+
+ALTER TABLE Cars
+ADD CONSTRAINT UQ_Cars_VinCode UNIQUE (VinCode);
+
+ALTER TABLE Cars
+ADD CONSTRAINT DF_Cars_IsCredit DEFAULT (0) FOR IsCredit;
+
+ALTER TABLE Cars
+ADD CONSTRAINT DF_Cars_IsTransfer DEFAULT (0) FOR IsTransfer;
+
+ALTER TABLE Cars
+ADD CONSTRAINT DF_Cars_IsColored DEFAULT (0) FOR IsColored;
 
 CREATE TABLE Contacts(
 [Id] int Identity(1,1) PRIMARY KEY,
@@ -81,3 +127,9 @@ CREATE TABLE Contacts(
 	[Email] varchar(100) not null,
 	[Phone] nvarchar(100) not null,
 )
+
+ALTER TABLE Cars
+ADD OwnerId int;
+
+ALTER TABLE Cars
+ADD CONSTRAINT FK_Cars_Contacts FOREIGN KEY (OwnerId) REFERENCES Contacts(Id);
